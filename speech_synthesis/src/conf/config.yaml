@@ -1,0 +1,50 @@
+dataset:
+    subject_id : S001
+    full_hpc_corpus_path : /lustre/scratch2/ws/0/chrwagne-radarspeech/corpus_six
+    full_hpc_test_corpus_path : /lustre/scratch2/ws/0/chrwagne-radarspeech/corpus_six_test
+    full_local_corpus_path : C:\Users\chris\Documents\Institut/corpora\speech_synthesis\corpus_six
+    full_local_test_corpus_path : C:\Users\chris\Documents\Institut\corpora\speech_synthesis\corpus_six_test
+
+transforms:
+    spectrum_keys : ['S12','S12','S12']
+    transform_keys : ['phase','mag_db_delta','phase_delta']
+    norm_intervals : [[-1,1],[-1,1],[-1,1]] 
+    num_freqs_used : 128 # Always starts at freq. index 0 (1 GHz currently).
+    use_ltas_subtraction : True
+
+run:
+    full_results_output_folder : ${hydra:runtime.cwd}/results
+    full_checkpoint_folder_name : ${hydra:runtime.cwd}/checkpoints
+    full_log_file_name : ${hydra:runtime.cwd}/log_file
+    is_hpc : False
+    is_test_mode : False
+    num_hp_eval_runs : 1
+   
+lstm_hyperparams:
+    input_size : None # Will get filled during runtime.
+    output_size : 80 # Number of mels.
+    learning_rate : 0.0001
+    lr_reduction_factor : 0.2 # Currently not used.
+    hidden_size : 11
+    num_layers : 1
+    dropout_prob : 0.1
+    is_bidirectional : False
+    num_epochs : 300
+    batch_size : 128 
+    patience : 15
+    time_context_frames : 50 # time context the lstm sees.
+    fixed_lag_frames : -3 # future context provided to the lstm.
+
+crn_hyperparams:
+    in_channels : [3, 16, 32, 64] # in_channels[0] == len(transform_keys)
+    out_channels : [16, 32, 64, 128]
+    num_features_per_transform : 128
+    output_size : 80
+    lstm_hidden_size : 10
+    lstm_num_layers : 1
+    batch_size : 128
+    num_epochs : 300
+    time_context_frames : 50
+    fixed_lag_frames : -3
+    learning_rate : 0.0001
+    patience : 15

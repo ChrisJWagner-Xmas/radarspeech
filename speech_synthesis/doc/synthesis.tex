@@ -1,0 +1,275 @@
+% Minimale Latex Vorlage für sämtliche Notizen
+\documentclass{article}
+\usepackage[default,scale=0.95]{opensans}
+% General document formatting
+\usepackage[margin=0.7in]{geometry}
+\usepackage[parfill]{parskip}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+% Related to math
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{siunitx}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{algorithm2e}
+% Graphics
+\usepackage{graphicx}
+\usepackage{pdfpages}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots,pgfplotstable}
+%%% Tables
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{tabu}
+%%% Floats
+\usepackage{caption}
+\usepackage{subfig}
+\usepackage{float}
+%%% Refs
+\usepackage{hyperref}
+%%% Standalone
+\usepackage[subpreambles=true]{standalone}
+%%% Import
+\usepackage{import}
+%%% Biblio
+% \RequirePackage[style=numeric,sorting=none]{biblatex}
+% \RequirePackage[backend=biber,style=authoryear-comp]{biblatex}
+% \RequirePackage[babel,german=quotes]{csquotes}
+% \RequirePackage{rsc}
+% \renewcommand{\bibsection}{\section{\bibname}}
+%%% Listings
+\usepackage{listings}
+\lstset{
+   basicstyle=\fontsize{10}{11}\selectfont\ttfamily
+}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{background}{rgb}{0.95,0.95,0.92}
+\definecolor{vhdlPurple}{rgb}{0.55,0,1}
+\definecolor{vhdlBlue}{rgb}{0,0,1}
+\lstdefinestyle{CStyle}{
+	backgroundcolor=\color{white},
+	commentstyle=\color{mGreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{mGray},
+	stringstyle=\color{mPurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace = false,
+	breaklines = true,
+	captionpos = b,
+	keepspaces = true,
+	numbers = left,
+	numbersep = 5pt,
+	showspaces = false,
+	showstringspaces = false,
+	showtabs = false,
+	tabsize = 2,
+	language = C
+}
+\lstdefinestyle{vhdlStyle}{
+	backgroundcolor=\color{white},
+	commentstyle=\color{mGray},
+	keywordstyle=\color{vhdlPurple},
+	numberstyle=\tiny\color{mGray},
+	stringstyle=\color{mGreen},
+	basicstyle=\footnotesize,
+	breakatwhitespace = false,
+	breaklines = true,
+	captionpos = b,
+	keepspaces = true,
+	numbers = left,
+	numbersep = 5pt,
+	showspaces = false,
+	showstringspaces = false,
+	showtabs = false,
+	tabsize = 2,
+	language = VHDL
+}
+% tables
+\usepackage{booktabs}
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+% Misc
+\usepackage[normalem]{ulem}
+
+\author{Christoph Wagner  \\ \texttt{christoph.wagner@tu-dresden.de}}
+\title{Radar-based speech synthesis}
+
+\begin{document}
+\maketitle
+
+This document contains notes on the radar-based speech synthesis.
+
+\section{Corpus}
+Corpus 5 is constructed from a 1000 sentence list taken from the carina corpus. Currently for a single speaker (me). The content is approximately 2 h of parallel speech and radar frames.
+
+Corpus 6 is constructed from the book ``20.000 Meilen unter dem Meer'' and contains the first 1000 sentences from the book.
+
+\subsection{Corpus generation}
+The corpus was generated to approximate an equal phoneme distribution (script under: \\ \texttt{C:/Programming/MATLAB/speech\_synthesis/create\_phonetically\_balanced\_sentence\_list.mat})
+
+Phoneme distribution (taken from the \texttt{Setup} folder).
+
+\begin{figure}[htbt]
+\centering
+\includegraphics[width=\textwidth]{corpus_five_phoneme_distribution.pdf}
+\caption{Carina corpus five phoneme distribution}
+\label{fig:carina_corpus_phoneme_distr}
+\end{figure}   
+
+
+\section{Vocoder}
+
+Currently use the HIFI-GAN Vocoder 
+\url{https://github.com/jik876/hifi-gan} with the \texttt{UNIVERSAL\_V1} model. No fine-tuning necessary. 
+
+\section{Architectures}
+
+\textbf{LSTM:} Currently use an LSTM (4 Layers) with dropout of 10 \% and layer size of 400 units, followed by a fully connected layer. Loss function currently is the MAE loss error to reduce smoothing induced by the MSE loss.
+
+\textbf{CRN:} The second one is an LSTM with a CNN frontend.
+
+\section{Pre-processing}
+
+\begin{itemize}
+\item LTAS subtraction from linear magnitude spectrum
+\item LTAS subtraction from log10 magnitude spectrum (equal to channel normalization)
+\item \textcolor{red}{TODO: Procrustes matching for each frame?}
+\item \textcolor{red}{TODO: I-vector approach as aux. information during training and testing for speaker normalization?}
+\item \textcolor{red}{TODO: Cepstral smoothing of radar spectra for clearer delta features?}
+\end{itemize}
+
+\section{Features}
+Tested features were:
+
+\begin{itemize}
+\item magnitude spectrum (linear, db)
+\item both magnitude variants minus the LTAS spectrum (in dB domain this corresponds to long-term channel normalization)
+\item delta magnitude spectrum (linear, db)
+\item delta phase spectrum
+\item impulse response
+\end{itemize}
+
+\section{Corpus recording to training, step-by-step}
+\begin{itemize}
+\item Record sentences along with aligned audio
+\item Store both in separate folders: \texttt{audio\_files} and \texttt{radar\_files}. 
+\item Create a files list named \texttt{*\_list.csv} for each folder.
+\item Run the Python script \texttt{normalize\_audio\_loudness.py}.
+\item Run the Python script \texttt{resample\_audio.py} to resample from 44100 Hz to 22000 Hz.
+\item Run the script \texttt{calculate\_mel\_spectrograms.py} to write out the mel-spectrograms for each audio frame of 220 samples.
+\end{itemize}
+
+\section{Evaluation on multi-speaker corpus (22.09.2022}
+
+\begin{itemize}
+\item LTAS calculation: average magnitude spectrum across \textbf{all} sessions (non-normalized)
+\item Frame by frame norm. does not work well and a sequence normalization could be difficult in an actual deployment scenario, where the sequence is not known in advance. However, the test is also on a full sequence. Also, sequence normalization would mimic the case where the user waits and records the spectra and all all derived features for x seconds, which are then used to calculate the corresponding min/max values of each feature (mag, delta-mag, phase etc.) for any new recording. 
+\end{itemize}
+
+\section{Results}
+Currently stored under 
+\texttt{C:/Programming/GitLab/radarspeech/speech\_synthesis/results/results\_corpus\_5.xlsx}
+
+With respect to MCD, the feature set [mag\_db - LTAS, mag\_db\_delta - LTAS, phase\_delta] work best currently, with a close second for the linear magnitude features. As for the delay, a delay of -3 works better than 0. More delay is likely to cause too much latency between speaking and resynthesis.
+
+\section{Next steps}
+
+
+\section{Development history}
+
+\subsection{Vocoder}
+\textbf{Iteration 1:} 
+The used vocoder is the WORLD vocoder, as STRAIGHT is proprietary $\Rightarrow$ apparently not, Code is under \url{https://github.com/shuaijiang/STRAIGHT}. I will use WORLD nevertheless for now, because STRAIGHT seems quite outdated, does not work immediately in MATLAB and does not have a Python implementation (?).
+
+Implementation switch to \url{https://github.com/JeremyCCHsu/Python-Wrapper-for-World-Vocoder}.
+
+To match the frame period of the radar speech frames of 100 Hz, the \texttt{frame\_period} parameter of the \texttt{Dio()} $f_0$ extraction function is set to 10 ms (default is 5 ms, as in \cite{gonzalez2017direct}).
+
+\subsubsection*{$F_0$ extraction}
+The synthesis is quite reliant on a good F0 estimation \cite{morise2017harvest}. Also, the sound quality of the training data is critical. Recordings with matlab (and also for the current radar speech recordings) have significantly lower synthesis quality compared to recordings with audacity.
+
+The \texttt{harvest()} method requires a 1 ms frame step internally with the option to interpolate to coarser time steps. It outputs both the time instants and the selected f0 candidates (object members).
+
+\subsubsection*{Spectral envelope extraction}
+(Currently) uses the \texttt{cheapTrick()} function \cite{masanoriCheapTrick_2015}. 
+
+\textbf{Parameters:} $q_1$ and \texttt{fft\_size}.
+
+The output is an amplitude spectrogram of size \texttt{fft\_size}+1. This can be condensed into MFCCs \textcolor{red}{to reduce the number of predicted parameters.}
+
+\textcolor{red}{The resynthesized quality from MFCCs is horrible, however. Maybe good quality audio will improve this.}
+
+\subsubsection*{Vocoder spectrograms to MFCCs}
+MFCC calculation pipeline:
+\begin{itemize}
+\item Start with audio signal if necessary (not if vocoder is used).
+\item Calculate or use $N$ power spectra $S=|fft()|^2$ on frame basis with windowing or the vocoder output directly.
+\item Frequency domain filtering with triangle filterbank and summing/binning to get the Mel spectra. use \\ \texttt{librosa.feature.melspectrogram()} or create a mel filterbank $mfb\,\,[J\times K]$ (with $K$ frequency components, equal to the FFT size +1, and $J$ Mel filter, one filter for each coeff) and compute the matrix product $mfb\cdot S$ $[K\times N]$. This operation is lossy.
+\item yields $J$ linear mel coefficients $\textbf{C}$ (the \textbf{Mel power spectrogram}
+\item Compute $10\cdot log_{10}(\textbf{C})$) (the log-power Mel spectrogram)
+\item Compute the $DCT(\textbf{C})$ transform of the log-mel spectrogram frame wise.
+\item \textcolor{red}{NOCH LANGZEITKANALNORMIERUNG?}
+\end{itemize}
+   
+The WORLD vocoder outputs a power spectrogram (according to the paper \cite{morise2016world}. 
+
+\textbf{Iteration 2:}
+\texttt{config.json} Bundles all configurable parameters of the synthesizer.
+
+\begin{table}[htbt] 
+\begin{tabular}{ll}
+\toprule
+\texttt{train\_config} & \\\toprule
+\texttt{fp16\_run} & potentially use 16 fp precision (degrades quality slightly) \\
+\texttt{checkpoint\_path} & path to saved checkpoints, including the file name (!) \\
+\texttt{data\_config} & \\\midrule
+\texttt{segment\_length} & sample segments length during training (i think, \cite{waveglow}, p. 13)\\
+\bottomrule
+\end{tabular}
+\caption{waveGlow config file explanation}
+\label{tab:waveGlow_config_file}
+\end{table}
+
+The sampling rate specified in the config.json needs to match the one from the training data.
+
+\subsubsection*{Inference}
+The number of samples $L$ waveGlow produces is 
+\begin{equation}
+L = N_{\mathrm{mels}}\cdot \mathrm{hop\_length}
+\end{equation}
+
+$N_{\mathrm{mels}}$ itself depends on the $\mathrm{hop\_length}$, fft size and window size during computation.
+
+When calculating the mel spectrograms from a given audio file, the upper corner frequency (fmax) is important (currently at 8kHz).
+
+\subsubsection*{Troubleshooting}
+
+\begin{itemize}
+\item The modification to the save function (b.c. the training got Killed when saving a checkpoint) was not necessary anymore when using the HPC directly from the uni network.. don't know why, but the default load/save functions work now.
+\end{itemize}
+
+Script to get it to train on the HPC:
+\begin{verbatim}
+On alpha partition:
+1) allocate ressources
+2) module load Python
+3) virtualenv --system-site-packages waveglow_env (writing to /scratch/ws/0/not possible (?))
+4) source waveglow_env/bin/activate
+4) python -m pip install --upgrade pip
+4) python -m pip install inflect librosa tensorboardX Unidecode pillow matplotlib
+5) module load modenv/hiera
+6) module load GCC/10.2.0 CUDA/11.1.1 OpenMPI/4.0.5 PyTorch/1.9.0 tqdm/4.56.2
+7) git clone https://github.com/NVIDIA/apex
+7) cd apex
+7) pip install -v --disable-pip-version-check --no-cache-dir ./
+==> WaveGlow actually trains after fixing the save_checkpoint() error! On a second iteration this was 
+likely an HPC error and not a code error. It also works out of the box without code modifications.
+\end{verbatim}
+
+\bibliography{synthesis_bib}
+\bibliographystyle{ieeetr}
+
+\end{document}

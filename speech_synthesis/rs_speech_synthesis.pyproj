@@ -1,0 +1,216 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>73bbb4a6-1756-42a3-8825-85b4f3f8ab01</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>train_lstm.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>rs_speech_synthesis</Name>
+    <RootNamespace>rs_speech_synthesis</RootNamespace>
+    <TestFramework>Pytest</TestFramework>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="config.py" />
+    <Compile Include="csv_to_numpy.py" />
+    <Compile Include="inference.py" />
+    <Compile Include="src\audiolib\calculate_mel_spectrograms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\audiolib\normalize_audio_loudness.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\audiolib\resample_audio.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\audiolib\audio.py" />
+    <Compile Include="src\audiolib\__init__.py" />
+    <Compile Include="src\datasets\rs_synthesis_dataset.py" />
+    <Compile Include="src\datasets\__init__.py" />
+    <Compile Include="src\extern\tacotron2\audio_processing.py" />
+    <Compile Include="src\extern\tacotron2\data_utils.py" />
+    <Compile Include="src\extern\tacotron2\distributed.py" />
+    <Compile Include="src\extern\tacotron2\hparams.py" />
+    <Compile Include="src\extern\tacotron2\layers.py" />
+    <Compile Include="src\extern\tacotron2\logger.py" />
+    <Compile Include="src\extern\tacotron2\loss_function.py" />
+    <Compile Include="src\extern\tacotron2\loss_scaler.py" />
+    <Compile Include="src\extern\tacotron2\model.py" />
+    <Compile Include="src\extern\tacotron2\multiproc.py" />
+    <Compile Include="src\extern\tacotron2\plotting_utils.py" />
+    <Compile Include="src\extern\tacotron2\stft.py" />
+    <Compile Include="src\extern\tacotron2\text\cleaners.py" />
+    <Compile Include="src\extern\tacotron2\text\cmudict.py" />
+    <Compile Include="src\extern\tacotron2\text\numbers.py" />
+    <Compile Include="src\extern\tacotron2\text\symbols.py" />
+    <Compile Include="src\extern\tacotron2\text\__init__.py" />
+    <Compile Include="src\extern\tacotron2\train.py" />
+    <Compile Include="src\extern\tacotron2\utils.py" />
+    <Compile Include="src\extern\tacotron2\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\fileio\file_io_functions.py" />
+    <Compile Include="src\fileio\import_rs_data.py" />
+    <Compile Include="src\fileio\__init__.py" />
+    <Compile Include="src\models\CnnRnnModel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\models\RsVocoderSynthesisGruModel.py" />
+    <Compile Include="src\models\RsVocoderSynthesisLstmModel.py" />
+    <Compile Include="src\models\TCN.py" />
+    <Compile Include="src\models\__init__.py" />
+    <Compile Include="src\training\train_and_evaluate.py" />
+    <Compile Include="src\training\transforms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\training\__init__.py" />
+    <Compile Include="tests\fixtures.py" />
+    <Compile Include="tests\test_base.py" />
+    <Compile Include="tests\__init__.py" />
+    <Compile Include="train_cnn_rnn.py" />
+    <Compile Include="train_lstm.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\conf\" />
+    <Folder Include="src\" />
+    <Folder Include="src\audiolib\" />
+    <Folder Include="src\datasets\" />
+    <Folder Include="src\extern\tacotron2\" />
+    <Folder Include="src\extern\tacotron2\filelists\" />
+    <Folder Include="src\extern\tacotron2\text\" />
+    <Folder Include="src\extern\tacotron2\waveglow\" />
+    <Folder Include="src\fileio\" />
+    <Folder Include="src\models\" />
+    <Folder Include="src\extern\" />
+    <Folder Include="src\training\" />
+    <Folder Include="src\training\__pycache__\" />
+    <Folder Include="tests\" />
+    <Folder Include="tests\test_data\" />
+    <Folder Include="tests\test_data\audio_files\" />
+    <Folder Include="tests\test_data\radar_files\" />
+    <Folder Include="tests\test_data\vocoder_params_files\" />
+    <Folder Include="tests\test_data\vocoder_params_files\coarse_ap\" />
+    <Folder Include="tests\test_data\vocoder_params_files\f0\" />
+    <Folder Include="tests\test_data\vocoder_params_files\mfcc\" />
+    <Folder Include="tests\test_data\vocoder_params_files\spectrogram\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\conf\config.yaml" />
+    <Content Include="src\extern\tacotron2\.gitmodules" />
+    <Content Include="src\extern\tacotron2\demo.wav" />
+    <Content Include="src\extern\tacotron2\Dockerfile" />
+    <Content Include="src\extern\tacotron2\filelists\ljs_audio_text_test_filelist.txt" />
+    <Content Include="src\extern\tacotron2\filelists\ljs_audio_text_train_filelist.txt" />
+    <Content Include="src\extern\tacotron2\filelists\ljs_audio_text_val_filelist.txt" />
+    <Content Include="src\extern\tacotron2\inference.ipynb" />
+    <Content Include="src\extern\tacotron2\LICENSE" />
+    <Content Include="src\extern\tacotron2\README.md" />
+    <Content Include="src\extern\tacotron2\requirements.txt" />
+    <Content Include="src\extern\tacotron2\tensorboard.png" />
+    <Content Include="src\extern\tacotron2\text\LICENSE" />
+    <Content Include="src\training\__pycache__\ParameterizedTransformFunction.cpython-38.pyc" />
+    <Content Include="src\training\__pycache__\Trainer.cpython-38.pyc" />
+    <Content Include="src\training\__pycache__\train_and_evaluate.cpython-38.pyc" />
+    <Content Include="src\training\__pycache__\__init__.cpython-38.pyc" />
+    <Content Include="tests\test_data\audio_files\audio_files_S001_SES01.csv" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s01.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s02.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s03.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s04.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s05.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s06.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s07.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s08.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s09.wav" />
+    <Content Include="tests\test_data\audio_files\S001_SES01_s10.wav" />
+    <Content Include="tests\test_data\radar_files\radar_files_S001_SES01.csv" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s01.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s02.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s03.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s04.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s05.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s06.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s07.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s08.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s09.bin" />
+    <Content Include="tests\test_data\radar_files\S001_SES01_s10.bin" />
+    <Content Include="tests\test_data\ReadMe.txt" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\coarse_ap_S001_SES01.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s01.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s02.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s03.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s04.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s05.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s06.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s07.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s08.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s09.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\coarse_ap\S001_SES01_coarse_ap_s10.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\f0_files_list_S001_SES01.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s01.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s02.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s03.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s04.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s05.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s06.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s07.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s08.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s09.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\f0\S001_SES01_f0_s10.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\mfcc_files_list_S001_SES01.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s01.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s02.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s03.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s04.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s05.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s06.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s07.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s08.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s09.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\mfcc\S001_SES01_mfcc_s10.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s01.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s02.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s03.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s04.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s05.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s06.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s07.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s08.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s09.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\S001_SES01_spectrogram_s10.csv" />
+    <Content Include="tests\test_data\vocoder_params_files\spectrogram\spectrogram_files_list_S001_SES01.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="env\">
+      <Id>env</Id>
+      <Version>3.9</Version>
+      <Description>env (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
